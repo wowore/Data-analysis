@@ -165,17 +165,22 @@ class ARIMAprocessing:
 
         # 预测
         print("开始预测\n")
-        pred = result.predict('2022-3-11', '2022-5-1', dynamic=True)
+        pred = result.predict('2022-3-11', '2022-3-18', dynamic=True)
         pred = pd.DataFrame(pred)
 
         pred = np.expm1(pred)  # 这里要进行对数变换的反操作
+
+        print("self.df[self.a]", np.expm1(self.df[self.a]))
+        pred.iloc[0, 0] = np.expm1(self.df[self.a])[-1]  # 变第一个值
         print("pred=", pred)
         stock_week = np.expm1(stock_week)
 
         plt.figure(figsize=(6, 6))
         plt.plot(pred)
         plt.plot(stock_week)
-        plt.show()
+        plt.savefig(f'结果文件\\{"ARIMA"}\\predict-data1{self.name}.PNG')
+        # plt.show()
+        pred.to_csv(f'结果文件\\{"ARIMA"}\\predict-data1{self.name}.csv', index=False, encoding="utf-8_sig")
 
         # 模型评估
         # result.plot_diagnostics(figsize=(16, 8))
@@ -185,8 +190,10 @@ class ARIMAprocessing:
 
 
 if __name__ == '__main__':
-    data = ARIMAprocessing()
-    data.name = 'AFG'
-    data.a = 'total_cases'
-    # data.a = 'total_deaths'
-    data.go()
+    l = ['GBR']
+    for l1 in l:
+        data = ARIMAprocessing()
+        data.name = l1
+        data.a = 'total_cases'
+        # data.a = 'total_deaths'
+        data.go()
