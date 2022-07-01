@@ -25,6 +25,56 @@ class GetData:
         self.time = ''
         self.time1, self.time2 = self.getTime()
 
+    # def getNews(self):
+    #     ChinaContentDict = {'head': '国内最新疫情资讯'}
+    #     WorldContentDict = {'head': '国外最新疫情资讯'}
+    #     with open('baseHtml.html', 'r', encoding='utf-8') as f:
+    #         self.htmlFile = f.read()
+    #     f.close()
+    #     china = self.htmlFile
+    #     world = self.htmlFile
+    #     baseUrl = "https://voice.baidu.com/act/newpneumonia/newpneumonia/"
+    #     chrome_options = Options()
+    #     # chrome_options.add_argument("--headless")
+    #     # chrome_options.add_argument("--disable-gpu")
+    #     driver = webdriver.Chrome(executable_path='F:/综合课程设计III/数据分析/chromedriver.exe',
+    #                               chrome_options=chrome_options)
+    #     driver.get(baseUrl)
+    #     resp_text = driver.page_source
+    #     page_html = etree.HTML(resp_text)
+    #     a_list = page_html.xpath('//*/div[@class="Virus_1-1-350_TB6x3k"]/a')
+    #     # i = 1
+    #     # for a in a_list:
+    #     #     url = a.xpath('./@href')[0]
+    #     #     div = a.xpath('./div')
+    #     #     title = div[0].xpath('./text()')[0]
+    #     #     ChinaContentDict[f'href{i}'] = url
+    #     #     ChinaContentDict[f'title{i}'] = title
+    #     #     i += 1
+    #     driver.find_element_by_xpath('//*[@id="ptab-1"]/div[2]/div[2]').click()
+    #     time.sleep(3)
+    #     # driver.get(baseUrl)
+    #     resp_text = driver.page_source
+    #     page_html = etree.HTML(resp_text)
+    #     b_list = page_html.xpath('//*/div[@class="Virus_1-1-350_TB6x3k"]/a')
+    #     i = 1
+    #     for b in b_list:
+    #         url = b.xpath('./@href')[0]
+    #         div = b.xpath('./div')
+    #         title = div[0].xpath('./text()')[0]
+    #         WorldContentDict[f'href{i}'] = url
+    #         WorldContentDict[f'title{i}'] = title
+    #         i += 1
+    #     driver.quit()
+    #
+    #     self.ChinaHtmlFile = china.format_map(ChinaContentDict)
+    #     self.WorldHtmlFile = world.format_map(WorldContentDict)
+    #     with open('ChinaNews.html', 'w', encoding='utf-8') as f:
+    #         f.write(self.ChinaHtmlFile)
+    #     f.close()
+    #     with open('WorldNews.html', 'w', encoding='utf-8') as f:
+    #         f.write(self.WorldHtmlFile)
+    #     f.close()
     def getNews(self):
         ChinaContentDict = {'head': '国内最新疫情资讯'}
         WorldContentDict = {'head': '国外最新疫情资讯'}
@@ -35,43 +85,49 @@ class GetData:
         world = self.htmlFile
         baseUrl = "https://voice.baidu.com/act/newpneumonia/newpneumonia/"
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
+        # chrome_options.add_argument("--headless")
+        # chrome_options.add_argument("--disable-gpu")
         driver = webdriver.Chrome(executable_path='F:/综合课程设计III/数据分析/chromedriver.exe',
                                   chrome_options=chrome_options)
         driver.get(baseUrl)
         resp_text = driver.page_source
         page_html = etree.HTML(resp_text)
-        a_list = page_html.xpath('//*/div[@class="Virus_1-1-350_TB6x3k"]/a')
-        i = 1
-        for a in a_list:
-            url = a.xpath('./@href')[0]
-            div = a.xpath('./div')
-            title = div[0].xpath('./text()')[0]
-            ChinaContentDict[f'href{i}'] = url
-            ChinaContentDict[f'title{i}'] = title
-            i += 1
-        driver.find_element_by_xpath('//*[@id="ptab-1"]/div[2]/div[2]').click()
+        for i in range(5):
+            print('=' * 20 + str(i + 1) + '=' * 20)
+            driver.find_element_by_xpath(f'//*[@id="ptab-1"]/div[3]/div[{i + 1}]/div[2]/div').click()
+            ChinaContentDict[f'href{i + 1}'] = driver.current_url
+            ChinaContentDict[f'title{i + 1}'] = \
+                page_html.xpath(f'//*[@id="ptab-1"]/div[3]/div[{i + 1}]/div[2]/div/text()')[0]
+            print(page_html.xpath(f'//*[@id="ptab-1"]/div[3]/div[{i + 1}]/div[2]/div/text()')[0])
+            print(driver.current_url)
+            # time.sleep(1)
+            driver.back()
+        self.ChinaHtmlFile = china.format_map(ChinaContentDict)
+        with open('ChinaNews.html', 'w', encoding='utf-8') as f:
+            f.write(self.ChinaHtmlFile)
+        f.close()
+        print(1214423435353253)
+        time.sleep(3)
+        button = driver.find_element_by_xpath('//*[@id="ptab-1"]/div[2]/div[2]')
+        driver.execute_script("$(arguments[0]).click()", button)
+        # driver.find_element_by_xpath().click()
         time.sleep(3)
         # driver.get(baseUrl)
         resp_text = driver.page_source
         page_html = etree.HTML(resp_text)
-        b_list = page_html.xpath('//*/div[@class="Virus_1-1-350_TB6x3k"]/a')
-        i = 1
-        for b in b_list:
-            url = b.xpath('./@href')[0]
-            div = b.xpath('./div')
-            title = div[0].xpath('./text()')[0]
-            WorldContentDict[f'href{i}'] = url
-            WorldContentDict[f'title{i}'] = title
-            i += 1
+        for i in range(10):
+            driver.find_element_by_xpath(f'//*[@id="ptab-1"]/div[3]/div[{i + 1}]/div[2]/div').click()
+            WorldContentDict[f'href{i + 1}'] = driver.current_url
+            WorldContentDict[f'title{i + 1}'] = \
+                page_html.xpath(f'//*[@id="ptab-1"]/div[3]/div[{i + 1}]/div[2]/div/text()')[0]
+            # print(page_html.xpath(f'//*[@id="ptab-1"]/div[3]/div[{i + 1}]/div[2]/div/text()')[0])
+            # print(driver.current_url)
+            time.sleep(1)
+            driver.back()
         driver.quit()
 
-        self.ChinaHtmlFile = china.format_map(ChinaContentDict)
         self.WorldHtmlFile = world.format_map(WorldContentDict)
-        with open('ChinaNews.html', 'w', encoding='utf-8') as f:
-            f.write(self.ChinaHtmlFile)
-        f.close()
+
         with open('WorldNews.html', 'w', encoding='utf-8') as f:
             f.write(self.WorldHtmlFile)
         f.close()
@@ -208,7 +264,7 @@ class GetData:
         #     if self.time1[:10] in file:
         #         flag = False
         # if flag:
-        self.getNews()
+        # self.getNews()
         self.getData()
         self.parseData(self.time1)
         self.globalDataDict['中国'] = [str(self.ChinaConfirmed), str(self.ChinaDied), str(self.ChinaCured)]
