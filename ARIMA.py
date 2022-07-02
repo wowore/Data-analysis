@@ -28,7 +28,7 @@ class ARIMAprocessing:
 
         self.yy = ['total_deaths', 'new_deaths', 'total_cases', 'new_cases',
                    'total_cases_per_million', 'new_cases_per_million',
-                   'total_deaths_per_million', 'new_deaths_per_million', ]  # 取出来的数据类型
+                   'total_deaths_per_million', 'new_deaths_per_million', 'gdp_per_capita']  # 取出来的数据类型
         self.scaler = MinMaxScaler(feature_range=(0, 1))  # 归一化模型,归一化,反归一化要用的
         self.a = 'total_cases'
         self.name = 'AFG'
@@ -117,10 +117,15 @@ class ARIMAprocessing:
 
         # 评估
         # AIC = sm.tsa.arma_order_select_ic(stock_train, max_ar=7, max_ma=7, ic='aic')['aic_min_order']
-        BIC = sm.tsa.arma_order_select_ic(stock_train, max_ar=7, max_ma=7, ic='bic')['bic_min_order']
+        # BIC = sm.tsa.arma_order_select_ic(stock_train, max_ar=7, max_ma=7, ic='bic')['bic_min_order']
         # print('the AIC is{},\nthe BIC is{}'.format(AIC, BIC))
-        p = BIC[0]
-        q = BIC[1]
+        # p = BIC[0]
+        # q = BIC[1]
+        p = 3
+        q = 3
+        # p = 7
+        # q = 10
+        print("参数pq：", p, q)
 
         # # 循环找最好的参数,热力图法
         # p_min = 0
@@ -179,21 +184,25 @@ class ARIMAprocessing:
         plt.plot(pred)
         plt.plot(stock_week)
         plt.savefig(f'结果文件\\{"ARIMA"}\\predict-data1{self.name}.PNG')
-        # plt.show()
+        plt.show()
         pred.to_csv(f'结果文件\\{"ARIMA"}\\predict-data1{self.name}.csv', index=False, encoding="utf-8_sig")
 
         # 模型评估
-        # result.plot_diagnostics(figsize=(16, 8))
-        # plt.show()
+        result.plot_diagnostics(figsize=(8, 8))
+        plt.show()
+
+        print("D-W检验:", sm.stats.durbin_watson(result.resid.values))
 
         self.preds = pred
 
 
 if __name__ == '__main__':
-    l = ['GBR']
+    l = ['JPN']
+    # l = ['CHN', 'FRA', 'GBR', 'JPN', 'USA', 'DEU', 'KOR', 'HKG', 'FRA', 'GBR']
     for l1 in l:
         data = ARIMAprocessing()
         data.name = l1
         data.a = 'total_cases'
         # data.a = 'total_deaths'
+        # data.a = 'gdp_per_capita'
         data.go()
